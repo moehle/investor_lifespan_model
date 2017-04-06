@@ -1,46 +1,41 @@
-from investor import Investor
-from insurer import Insurer
-from market import Market
-from lifespan_model import LifespanModel
-from mortality_data import π, G, tf
-
+import investor_lifespan_model as mdl
 import numpy as np
 import matplotlib.pyplot as plt
 
 # Define problem parameters:
 np.random.seed(0)
-t0 = 29    # Current age.
+t0 = 30    # Current age.
 W0 = 100   # Initial wealth.
 δ  = 10    # Relative risk aversion parameter.
-K  = 20    # Number of lifetime simulations to run.
-Δt = 1/12  # Time steps per year.
+K  = 10    # Number of lifetime simulations to run.
+Δt = 1/12  # Duration of each time step.
 tf = 100   # Maximum age considered.
 
 # Define after-tax income over time.
 def Y(t):
-    t_vec = [  29,  30,  40,  50,  60,  61,  70, 100 ]
-    Y_vec = [  70,  70,  80,  90, 100,   0,   0,   0 ]
+    t_vec = [  29,  30,  40,  50,  60,  61,  70, 100 ] # age
+    Y_vec = [  70,  70,  80,  90, 100,   0,   0,   0 ] # income
     return np.interp(t, t_vec, Y_vec)
 
 # Define time-weighting functions for utility.
 def h(t):
-    t_vec = [  30,   40,   50,  60,  70,  80,  90, 100 ]
+    t_vec = [  30,   40,   50,  60,  70,  80,  90, 100 ] # age
     h_vec = [   1,    1,    1,   1,   1,   1,   1,   1 ] # no children
-    h_vec = [   1,    2,    2,   1,   1,   1,   1,   1 ] # children
+    h_vec = [   1,    2,    2,   1,   1,   1,   1,   1 ] # with children
     return np.interp(t, t_vec, h_vec)**(δ-1)
 
 # Define time-weighting functions for bequeathment.
 def m(t):
-    t_vec = [  30,  40,  50,  60,  70,  80,  90, 100 ]
+    t_vec = [  30,  40,  50,  60,  70,  80,  90, 100 ] # age
     m_vec = [   0,   0,   0,    0,  0,   0,   0,   0 ] # no children
-    m_vec = [   0,  20,  10,   8,   5,   3,   2,   1 ] # children
+    m_vec = [   0,  20,  10,   8,   5,   3,   2,   1 ] # with children
     return np.interp(t, t_vec, m_vec)**(-(1-δ))
 
 # Set up problem:
-inv = Investor(π, G, δ, h, m, Y)
-ins = Insurer(inv)
-mkt = Market()
-mdl = LifespanModel(inv, ins, mkt, t0=t0, tf=tf, Δt=Δt)
+inv = mdl.Investor(mdl.π, mdl.G, δ, h, m, Y)
+ins = mdl.Insurer(inv)
+mkt = mdl.Market()
+mdl = mdl.LifespanModel(inv, ins, mkt, t0=t0, tf=tf, Δt=Δt)
 
 # Simulate several lifetimes:
 res = []
