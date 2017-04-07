@@ -45,11 +45,6 @@ class LifespanModel():
         #t1 = λ_vec**(γ/δ) * λ_vec
         t1 = λ_vec**(γ/δ+1)
         t2 = λ_vec**(1/δ)
-        print(γ/δ + 1)
-        print(1/δ)
-
-        #print(k_vec_me - k_vec)
-        print(np.linalg.norm(t1 - t2))
 
         A = np.zeros((K,K))
         v = (α - r)**2 / (2*δ*σ**2)
