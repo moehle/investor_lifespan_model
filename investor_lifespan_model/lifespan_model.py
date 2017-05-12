@@ -35,16 +35,8 @@ class LifespanModel():
         # AS IT APPEARS IN THE PAPER:
         # k_vec = (λ_vec / μ_vec)**(γ/δ) * (λ_vec * m_vec)**(1/δ) + h_vec**(1/δ)
 
-        # MY VERSION
-        k_vec_me = (λ_vec / μ_vec)**(γ/δ) * λ_vec * m_vec**(1/δ) + h_vec**(1/δ)
-
-        # SCOTT VERSION
-        #k_vec = μ_vec**(-γ/δ) * (λ_vec * m_vec)**(1/δ) + h_vec**(1/δ)
+        # CORRECT VERSION
         k_vec = (1/μ_vec)**(γ/δ) * (λ_vec * m_vec)**(1/δ) + h_vec**(1/δ)
-
-        #t1 = λ_vec**(γ/δ) * λ_vec
-        t1 = λ_vec**(γ/δ+1)
-        t2 = λ_vec**(1/δ)
 
         A = np.zeros((K,K))
         v = (α - r)**2 / (2*δ*σ**2)
@@ -53,7 +45,6 @@ class LifespanModel():
                 if s >= t:
                     A[k,j] = (k_vec[j]*G_vec[j]/G_vec[k] 
                               * np.exp((γ/δ)*(v+r)*(s-t) + (γ/δ)*(H_vec[k] - H_vec[j])))
-                    #A[k,j] = (k_vec[j]*G_vec[j]/G_vec[k])
         a_vec = (self.Δt * np.sum(A, 1))**δ
 
         B = np.zeros((K,K))
@@ -176,6 +167,7 @@ class LifespanModel():
                    'b' : self.b_vec,
                    'μ' : self.μ_vec,
                    'X' : X_vec,
+                   'Y' : self.Y_vec,
                    'Wbar' : Wbar_vec,
                    'Xbar' : Xbar_vec,
                    'ARA' : ARA_vec,
